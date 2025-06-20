@@ -1,3 +1,617 @@
+import React, { createContext, useContext, useState } from 'react';
+
+interface Language {
+  code: string;
+  name: string;
+  nativeName: string;
+  flag: string;
+}
+
+interface LanguageContextType {
+  currentLanguage: Language;
+  setLanguage: (language: Language) => void;
+  languages: Language[];
+  t: (key: string) => string;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
+
+const languages: Language[] = [
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+  { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
+  { code: 'th', name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
+  { code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩' },
+  { code: 'my', name: 'Burmese', nativeName: 'မြန်မာ', flag: '🇲🇲' },
+  { code: 'lo', name: 'Lao', nativeName: 'ລາວ', flag: '🇱🇦' },
+  { code: 'tl', name: 'Filipino', nativeName: 'Filipino', flag: '🇵🇭' },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  { code: 'az', name: 'Azerbaijani', nativeName: 'Azərbaycan', flag: '🇦🇿' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+];
+
+// Mock translation function
+const translations: Record<string, Record<string, string>> = {
+  en: {
+    'hero.title': 'Stories of East',
+    'hero.subtitle': 'Discover Asian Heritage',
+  },
+  hi: {
+    'hero.title': 'पूर्व की कहानियां',
+    'hero.subtitle': 'एशियाई विरासत खोजें',
+  },
+  // Add more translations as needed
+};
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(languages[0]);
+
+  const setLanguage = (language: Language) => {
+    setCurrentLanguage(language);
+  };
+
+  const t = (key: string): string => {
+    return translations[currentLanguage.code]?.[key] || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage, languages, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+import React, { createContext, useContext, useState } from 'react';
+
+interface Region {
+  id: string;
+  name: string;
+  code: string;
+  currency: string;
+  language: string;
+  flag: string;
+  popular: boolean;
+}
+
+interface RegionContextType {
+  currentRegion: Region;
+  setRegion: (region: Region) => void;
+  regions: Region[];
+}
+
+const RegionContext = createContext<RegionContextType | undefined>(undefined);
+
+export const useRegion = () => {
+  const context = useContext(RegionContext);
+  if (context === undefined) {
+    throw new Error('useRegion must be used within a RegionProvider');
+  }
+  return context;
+};
+
+const regions: Region[] = [
+  {
+    id: 'india',
+    name: 'India',
+    code: 'IN',
+    currency: '₹',
+    language: 'Hindi/English',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'china',
+    name: 'China',
+    code: 'CN',
+    currency: '¥',
+    language: 'Mandarin',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'thailand',
+    name: 'Thailand',
+    code: 'TH',
+    currency: '฿',
+    language: 'Thai',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'japan',
+    name: 'Japan',
+    code: 'JP',
+    currency: '¥',
+    language: 'Japanese',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'pakistan',
+    name: 'Pakistan',
+    code: 'PK',
+    currency: '₨',
+    language: 'Urdu',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'bangladesh',
+    name: 'Bangladesh',
+    code: 'BD',
+    currency: '৳',
+    language: 'Bengali',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: true,
+  },
+  {
+    id: 'myanmar',
+    name: 'Myanmar',
+    code: 'MM',
+    currency: 'K',
+    language: 'Burmese',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'laos',
+    name: 'Laos',
+    code: 'LA',
+    currency: '₭',
+    language: 'Lao',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'philippines',
+    name: 'Philippines',
+    code: 'PH',
+    currency: '₱',
+    language: 'Filipino',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'turkey',
+    name: 'Turkey',
+    code: 'TR',
+    currency: '₺',
+    language: 'Turkish',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'saudi-arabia',
+    name: 'Saudi Arabia',
+    code: 'SA',
+    currency: '﷼',
+    language: 'Arabic',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'azerbaijan',
+    name: 'Azerbaijan',
+    code: 'AZ',
+    currency: '₼',
+    language: 'Azerbaijani',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'russia',
+    name: 'Russia',
+    code: 'RU',
+    currency: '₽',
+    language: 'Russian',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+    id: 'south-korea',
+    name: 'South Korea',
+    code: 'KR',
+    currency: '₩',
+    language: 'Korean',
+    flag: 'https://images.pexels.com/photos/13918169/pexels-photo-13918169.jpeg?auto=compress&cs=tinysrgb&w=100&h=75',
+    popular: false,
+  },
+  {
+  id: 'indonesia',
+  name: 'Indonesia',
+  code: 'ID',
+  currency: 'Rp',
+  currency_code: 'IDR',
+  language: 'Indonesian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg',
+  popular: false,
+},
+{
+  id: 'malaysia',
+  name: 'Malaysia',
+  code: 'MY',
+  currency: 'RM',
+  currency_code: 'MYR',
+  language: 'Malay',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg',
+  popular: false,
+},
+{
+  id: 'singapore',
+  name: 'Singapore',
+  code: 'SG',
+  currency: 'S$',
+  currency_code: 'SGD',
+  language: 'English, Malay, Mandarin Chinese, Tamil',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Singapore.svg',
+  popular: false,
+},
+{
+  id: 'vietnam',
+  name: 'Vietnam',
+  code: 'VN',
+  currency: '₫',
+  currency_code: 'VND',
+  language: 'Vietnamese',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg',
+  popular: false,
+},
+{
+  id: 'brunei',
+  name: 'Brunei',
+  code: 'BN',
+  currency: 'B$',
+  currency_code: 'BND',
+  language: 'Malay',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Brunei.svg',
+  popular: false,
+},
+{
+  id: 'cambodia',
+  name: 'Cambodia',
+  code: 'KH',
+  currency: 'KHR',
+  currency_code: 'KHR',
+  language: 'Khmer',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_Cambodia.svg',
+  popular: false,
+},
+{
+  id: 'timor-leste',
+  name: 'Timor-Leste',
+  code: 'TL',
+  currency: 'US$',
+  currency_code: 'USD',
+  language: 'Portuguese, Tetum',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/2/26/Flag_of_East_Timor.svg',
+  popular: false,
+},
+{
+  id: 'mongolia',
+  name: 'Mongolia',
+  code: 'MN',
+  currency: '₮',
+  currency_code: 'MNT',
+  language: 'Mongolian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Mongolia.svg',
+  popular: false,
+},
+{
+  id: 'taiwan',
+  name: 'Taiwan',
+  code: 'TW',
+  currency: 'NT$',
+  currency_code: 'TWD',
+  language: 'Mandarin Chinese',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg',
+  popular: false,
+},
+{
+  id: 'hong-kong',
+  name: 'Hong Kong',
+  code: 'HK',
+  currency: 'HK$',
+  currency_code: 'HKD',
+  language: 'Chinese, English',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Flag_of_Hong_Kong.svg',
+  popular: false,
+},
+{
+  id: 'macau',
+  name: 'Macau',
+  code: 'MO',
+  currency: 'MOP$',
+  currency_code: 'MOP',
+  language: 'Chinese, Portuguese',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Flag_of_Macau.svg',
+  popular: false,
+},
+{
+  id: 'nepal',
+  name: 'Nepal',
+  code: 'NP',
+  currency: 'रु',
+  currency_code: 'NPR',
+  language: 'Nepali',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Flag_of_Nepal.svg',
+  popular: false,
+},
+{
+  id: 'sri-lanka',
+  name: 'Sri Lanka',
+  code: 'LK',
+  currency: '₨',
+  currency_code: 'LKR',
+  language: 'Sinhala, Tamil, English',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Flag_of_Sri_Lanka.svg',
+  popular: false,
+},
+{
+  id: 'bhutan',
+  name: 'Bhutan',
+  code: 'BT',
+  currency: 'Nu.',
+  currency_code: 'BTN',
+  language: 'Dzongkha',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Flag_of_Bhutan.svg',
+  popular: false,
+},
+{
+  id: 'maldives',
+  name: 'Maldives',
+  code: 'MV',
+  currency: 'Rf',
+  currency_code: 'MVR',
+  language: 'Dhivehi, English',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Flag_of_the_Maldives.svg',
+  popular: false,
+},
+{
+  id: 'afghanistan',
+  name: 'Afghanistan',
+  code: 'AF',
+  currency: '؋',
+  currency_code: 'AFN',
+  language: 'Dari, Pashto',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Afghanistan.svg',
+  popular: false,
+},
+{
+  id: 'united-arab-emirates',
+  name: 'United Arab Emirates',
+  code: 'AE',
+  currency: 'Dhs',
+  currency_code: 'AED',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_the_United_Arab_Emirates.svg',
+  popular: false,
+},
+{
+  id: 'israel',
+  name: 'Israel',
+  code: 'IL',
+  currency: '₪',
+  currency_code: 'ILS',
+  language: 'Hebrew, Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Israel.svg',
+  popular: false,
+},
+{
+  id: 'iran',
+  name: 'Iran',
+  code: 'IR',
+  currency: '﷼',
+  currency_code: 'IRR',
+  language: 'Persian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg',
+  popular: false,
+},
+{
+  id: 'iraq',
+  name: 'Iraq',
+  code: 'IQ',
+  currency: 'ع.د',
+  currency_code: 'IQD',
+  language: 'Arabic, Kurdish',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Flag_of_Iraq.svg',
+  popular: false,
+},
+{
+  id: 'syria',
+  name: 'Syria',
+  code: 'SY',
+  currency: '£',
+  currency_code: 'SYP',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Flag_of_Syria.svg',
+  popular: false,
+},
+{
+  id: 'jordan',
+  name: 'Jordan',
+  code: 'JO',
+  currency: 'JD',
+  currency_code: 'JOD',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/c/c0/Flag_of_Jordan.svg',
+  popular: false,
+},
+{
+  id: 'lebanon',
+  name: 'Lebanon',
+  code: 'LB',
+  currency: 'ل.ل',
+  currency_code: 'LBP',
+  language: 'Arabic, French',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Flag_of_Lebanon.svg',
+  popular: false,
+},
+{
+  id: 'palestine',
+  name: 'Palestine',
+  code: 'PS',
+  currency: 'ILS/JOD',
+  currency_code: null,
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Palestine.svg',
+  popular: false,
+},
+{
+  id: 'kuwait',
+  name: 'Kuwait',
+  code: 'KW',
+  currency: 'د.ك',
+  currency_code: 'KWD',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/a/aa/Flag_of_Kuwait.svg',
+  popular: false,
+},
+{
+  id: 'bahrain',
+  name: 'Bahrain',
+  code: 'BH',
+  currency: 'ب.د',
+  currency_code: 'BHD',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Bahrain.svg',
+  popular: false,
+},
+{
+  id: 'qatar',
+  name: 'Qatar',
+  code: 'QA',
+  currency: 'ر.ق',
+  currency_code: 'QAR',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Qatar.svg',
+  popular: false,
+},
+{
+  id: 'oman',
+  name: 'Oman',
+  code: 'OM',
+  currency: 'ﻭ.ر.',
+  currency_code: 'OMR',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Flag_of_Oman.svg',
+  popular: false,
+},
+{
+  id: 'yemen',
+  name: 'Yemen',
+  code: 'YE',
+  currency: '﷼',
+  currency_code: 'YER',
+  language: 'Arabic',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Flag_of_Yemen.svg',
+  popular: false,
+},
+{
+  id: 'georgia',
+  name: 'Georgia',
+  code: 'GE',
+  currency: '₾',
+  currency_code: 'GEL',
+  language: 'Georgian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Flag_of_Georgia.svg',
+  popular: false,
+},
+{
+  id: 'armenia',
+  name: 'Armenia',
+  code: 'AM',
+  currency: '֏',
+  currency_code: 'AMD',
+  language: 'Armenian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_Armenia.svg',
+  popular: false,
+},
+{
+  id: 'cyprus',
+  name: 'Cyprus',
+  code: 'CY',
+  currency: '€',
+  currency_code: 'EUR',
+  language: 'Greek, Turkish',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Cyprus.svg',
+  popular: false,
+},
+{
+  id: 'kazakhstan',
+  name: 'Kazakhstan',
+  code: 'KZ',
+  currency: '₸',
+  currency_code: 'KZT',
+  language: 'Kazakh, Russian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/Flag_of_Kazakhstan.svg',
+  popular: false,
+},
+{
+  id: 'kyrgyzstan',
+  name: 'Kyrgyzstan',
+  code: 'KG',
+  currency: 'с',
+  currency_code: 'KGS',
+  language: 'Kyrgyz, Russian',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Flag_of_Kyrgyzstan.svg',
+  popular: false,
+},
+{
+  id: 'uzbekistan',
+  name: 'Uzbekistan',
+  code: 'UZ',
+  currency: 'soʻm',
+  currency_code: 'UZS',
+  language: 'Uzbek',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg',
+  popular: false,
+},
+{
+  id: 'turkmenistan',
+  name: 'Turkmenistan',
+  code: 'TM',
+  currency: 'm',
+  currency_code: 'TMT',
+  language: 'Turkmen',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Turkmenistan.svg',
+  popular: false,
+},
+{
+  id: 'tajikistan',
+  name: 'Tajikistan',
+  code: 'TJ',
+  currency: 'ЅМ',
+  currency_code: 'TJS',
+  language: 'Tajik',
+  flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Flag_of_Tajikistan.svg',
+  popular: false,
+},
+];
+
+export const RegionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentRegion, setCurrentRegion] = useState<Region>(regions[0]);
+
+  const setRegion = (region: Region) => {
+    setCurrentRegion(region);
+  };
+
+  return (
+    <RegionContext.Provider value={{ currentRegion, setRegion, regions }}>
+      {children}
+    </RegionContext.Provider>
+  );
+};
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="/Screenshot (21).png">
